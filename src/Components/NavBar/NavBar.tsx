@@ -1,41 +1,41 @@
-import { EuiSideNav, htmlIdGenerator } from "@elastic/eui";
-import { useState } from "react";
+import { EuiSideNav, htmlIdGenerator } from '@elastic/eui'
+import { useState } from 'react'
 
 export const NavBar = () => {
-    const [isSideNavOpenOnMobile, setisSideNavOpenOnMobile] = useState(false);
+  const [isSideNavOpenOnMobile, setisSideNavOpenOnMobile] = useState(false)
 
-    const toggleOpenOnMobile = () => {
-        setisSideNavOpenOnMobile(!isSideNavOpenOnMobile);
-    };
+  const toggleOpenOnMobile = () => {
+    setisSideNavOpenOnMobile(!isSideNavOpenOnMobile)
+  }
 
-    const sideNav = [
+  const sideNav = [
+    {
+      name: 'Root item',
+      id: htmlIdGenerator('basicExample')(),
+      items: [
         {
-            name: 'Root item',
-            id: htmlIdGenerator('basicExample')(),
-            items: [
-                {
-                    name: 'Summary',
-                    id: htmlIdGenerator('basicExample')(),
-                    href: '/summary/'
-                },
-                {
-                    name: 'Patients',
-                    id: htmlIdGenerator('basicExample')(),
-                    href: '/patients/',
-                },
-            ],
+          name: 'Summary',
+          id: htmlIdGenerator('basicExample')(),
+          href: '/summary/',
         },
-    ];
+        {
+          name: 'Patients',
+          id: htmlIdGenerator('basicExample')(),
+          href: '/patients/',
+        },
+      ],
+    },
+  ]
 
-    return (
-        <div>
-            <EuiSideNav
-                aria-label="Basic example"
-                mobileTitle="Basic example"
-                toggleOpenOnMobile={() => toggleOpenOnMobile()}
-                isOpenOnMobile={isSideNavOpenOnMobile}
-                items={sideNav}
-            />
-        </div>
-    );
+  return (
+    <div>
+      <EuiSideNav
+        aria-label="Basic example"
+        mobileTitle="Basic example"
+        toggleOpenOnMobile={() => toggleOpenOnMobile()}
+        isOpenOnMobile={isSideNavOpenOnMobile}
+        items={sideNav}
+      />
+    </div>
+  )
 }
