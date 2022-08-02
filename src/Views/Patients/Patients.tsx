@@ -225,7 +225,6 @@ export const Patients = () => {
       name: 'First Name',
       sortable: true,
       'data-test-subj': 'firstNameCell',
-      contentEditable: true,
     },
     {
       field: 'lastName',
@@ -234,17 +233,14 @@ export const Patients = () => {
       mobileOptions: {
         show: false,
       },
-      contentEditable: true,
     },
     {
       field: 'email',
       name: 'Email',
-      contentEditable: true,
     },
     {
       field: 'pesel',
       name: 'Pesel',
-      contentEditable: true,
     },
     {
       field: 'address',
