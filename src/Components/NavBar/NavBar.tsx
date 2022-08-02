@@ -10,13 +10,14 @@ export const NavBar = () => {
 
   const sideNav = [
     {
-      name: 'Root item',
+      name: 'Medical Center',
       id: htmlIdGenerator('basicExample')(),
       items: [
         {
           name: 'Summary',
           id: htmlIdGenerator('basicExample')(),
           href: '/summary/',
+          emphasize: true,
         },
         {
           name: 'Patients',

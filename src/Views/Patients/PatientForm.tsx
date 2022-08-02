@@ -1,63 +1,65 @@
-import {
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
-  EuiFormRow,
-  EuiSpacer,
-  useEuiBackgroundColor,
-} from '@elastic/eui'
+import { EuiFieldNumber, EuiFieldText, EuiFlexGrid, EuiFlexItem, EuiForm, EuiFormRow } from '@elastic/eui'
+import { Patient } from '../../store/Patient/types'
 
-export const PatientForm = () => {
+type Props = {
+  patientToEdit: Patient | undefined
+}
+
+export const PatientForm = (props: Props) => {
   return (
     <EuiForm component="form">
-      <EuiFlexGroup style={{ maxWidth: 1200 }} component="span">
+      <EuiFlexGrid style={{ maxWidth: 1200 }} component="span" columns={2}>
         <EuiFlexItem grow={2}>
           <EuiFormRow label="First name">
-            <EuiFieldText name="firstName" />
+            <EuiFieldText name="firstName" value={props.patientToEdit?.firstName} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem grow={2}>
           <EuiFormRow label="Last name">
-            <EuiFieldText name="lastName" />
+            <EuiFieldText name="lastName" value={props.patientToEdit?.lastName} />
           </EuiFormRow>
         </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup style={{ maxWidth: 1200 }}>
         <EuiFlexItem>
           <EuiFormRow label="Email">
-            <EuiFieldText name="firstName" />
+            <EuiFieldText name="email" value={props.patientToEdit?.email} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
           <EuiFormRow label="Pesel">
-            <EuiFieldText name="lastName" />
+            <EuiFieldText name="pesel" value={props.patientToEdit?.pesel} />
           </EuiFormRow>
         </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexGroup>
-        <EuiFlexItem grow={false}>
+        <EuiFlexItem>
           <EuiFormRow label="City">
-            <div>
-              <EuiFieldText name="firstName" />
-            </div>
+            <EuiFieldText name="city" value={props.patientToEdit?.address.city} />
           </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem style={{ maxWidth: 100 }}>
-          <div>
-            <EuiFormRow label="Postal-Code" style={{ maxWidth: 100 }}>
-              <EuiFieldText name="lastName" />
-            </EuiFormRow>
-          </div>
+          <EuiFormRow label="Postal-Code" style={{ maxWidth: 100 }}>
+            <EuiFieldNumber name="postalCode1" value={props.patientToEdit?.address.prePostalCode} />
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem style={{ maxWidth: 100 }}>
-          <div>
-            <EuiFormRow hasEmptyLabelSpace style={{ maxWidth: 100 }}>
-              <EuiFieldText name="lastName" />
-            </EuiFormRow>
-          </div>
+          <EuiFormRow hasEmptyLabelSpace style={{ maxWidth: 100 }}>
+            <EuiFieldNumber name="postalCode2" value={props.patientToEdit?.address.postPostalCode} />
+          </EuiFormRow>
         </EuiFlexItem>
-      </EuiFlexGroup>
+        <EuiFlexItem>
+          <EuiFormRow label="Street">
+            <EuiFieldText name="street" value={props.patientToEdit?.address.street} />
+          </EuiFormRow>
+        </EuiFlexItem>
+        <EuiFlexItem style={{ maxWidth: 100 }}>
+          <EuiFormRow label="Building">
+            <EuiFieldNumber name="buildingNumber" value={props.patientToEdit?.address.buildingNumber} />
+          </EuiFormRow>
+        </EuiFlexItem>
+        <EuiFlexItem style={{ maxWidth: 100 }}>
+          <EuiFormRow label="Apartment">
+            <EuiFieldNumber name="apartmentNumber" value={props.patientToEdit?.address.apartmentNumber} />
+          </EuiFormRow>
+        </EuiFlexItem>
+      </EuiFlexGrid>
     </EuiForm>
   )
 }

@@ -10,7 +10,6 @@ export interface Patient {
 export interface Address {
   city: string
   street: string
-  country: string
   prePostalCode: number
   postPostalCode: number
   buildingNumber: number

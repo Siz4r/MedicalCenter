@@ -1,18 +1,22 @@
 import {
   CriteriaWithPagination,
   EuiBasicTable,
+  EuiBasicTableColumn,
   EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
+  EuiInMemoryTable,
   EuiSearchBar,
   EuiSearchBarOnChangeArgs,
   EuiSpacer,
+  EuiTableActionsColumnType,
   EuiTableSelectionType,
   EuiTableSortingType,
   EuiText,
   Query,
 } from '@elastic/eui'
+import { Action } from '@elastic/eui/src/components/basic_table/action_types'
 import { useState } from 'react'
 import { Address, Patient } from '../../store/Patient/types'
 import { PatientForm } from './PatientForm'
@@ -29,7 +33,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -45,7 +48,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -61,7 +63,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -77,7 +78,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -93,7 +93,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -109,7 +108,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -125,7 +123,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -141,7 +138,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -157,7 +153,6 @@ const PATIENTS: Patient[] = [
       street: 'Sokolska',
       prePostalCode: 16,
       postPostalCode: 130,
-      country: 'Poland',
       buildingNumber: 3,
       apartmentNumber: undefined,
     },
@@ -172,6 +167,7 @@ export const Patients = () => {
   const [query, setQuery] = useState<Query>(EuiSearchBar.Query.MATCH_ALL)
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedItems, setSelectedItems] = useState<Patient[]>([])
+  const [patientToEdit, setPatientToEdit] = useState<Patient | undefined>(undefined)
 
   const onTableChange = ({ page, sort }: CriteriaWithPagination<Patient>) => {
     const { index: pageIndex, size: pageSize } = page
@@ -205,12 +201,31 @@ export const Patients = () => {
 
   const totalItemCount = queriedItems.length
 
-  const columns = [
+  const actions: Action<Patient>[] = [
+    {
+      name: 'Clone',
+      description: 'Clone this person',
+      icon: 'pencil',
+      type: 'icon',
+      onClick: (patient: Patient) => setPatientToEdit(patient),
+    },
+    {
+      name: 'Delete',
+      description: 'Delete this person',
+      icon: 'trash',
+      type: 'icon',
+      color: 'danger',
+      onClick: () => console.log('delete'),
+    },
+  ]
+
+  const columns: EuiBasicTableColumn<Patient>[] = [
     {
       field: 'firstName',
       name: 'First Name',
       sortable: true,
       'data-test-subj': 'firstNameCell',
+      contentEditable: true,
     },
     {
       field: 'lastName',
@@ -219,14 +234,17 @@ export const Patients = () => {
       mobileOptions: {
         show: false,
       },
+      contentEditable: true,
     },
     {
       field: 'email',
       name: 'Email',
+      contentEditable: true,
     },
     {
       field: 'pesel',
       name: 'Pesel',
+      contentEditable: true,
     },
     {
       field: 'address',
@@ -238,6 +256,10 @@ export const Patients = () => {
           } ${address.apartmentNumber ? address.apartmentNumber : ''}`}
         </EuiText>
       ),
+    },
+    {
+      name: 'Actions',
+      actions,
     },
   ]
 
@@ -326,7 +348,7 @@ export const Patients = () => {
           defaultQuery={EuiSearchBar.Query.MATCH_ALL}
           query={query}
           box={{
-            placeholder: 'e.g. type:visualization -is:active joe',
+            placeholder: 'Search',
             schema,
           }}
           onChange={onChange}
@@ -340,19 +362,19 @@ export const Patients = () => {
       </EuiText>
       <EuiSpacer size="s" />
       <EuiHorizontalRule margin="none" style={{ height: 2 }} />
-      <EuiBasicTable
+      <EuiInMemoryTable
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         itemId="id"
         columns={columns}
         pagination={pagination}
-        sorting={sorting}
+        // sorting={sorting}
         onChange={onTableChange}
         isSelectable={true}
         selection={selection}
       />
       <EuiSpacer size="s" />
-      <PatientForm />
+      <PatientForm patientToEdit={patientToEdit} />
     </div>
   )
 }
