@@ -1,5 +1,3 @@
 export const Summary = () => {
-    return (
-        <div>Summary</div>
-    )
+  return <div>Summary</div>
 }
