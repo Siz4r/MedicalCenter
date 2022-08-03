@@ -6,158 +6,21 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiHorizontalRule,
-  EuiInMemoryTable,
   EuiSearchBar,
   EuiSearchBarOnChangeArgs,
   EuiSpacer,
-  EuiTableActionsColumnType,
   EuiTableSelectionType,
   EuiTableSortingType,
   EuiText,
   Query,
 } from '@elastic/eui'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
-import { useState } from 'react'
-import { Address, Patient } from '../../store/Patient/types'
+import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Address, newPatient, Patient } from '../../store/Patient/types'
 import { PatientForm } from './PatientForm'
-
-const PATIENTS: Patient[] = [
-  {
-    id: '1',
-    firstName: 'Mariusz',
-    lastName: 'Pudzianowski',
-    email: 'fmsadfa@gmail.com',
-    pesel: '24132142141',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '2',
-    firstName: 'Janek',
-    lastName: 'Kowalski',
-    email: 'vczxcvxz@gmail.com',
-    pesel: '24765845681',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '3',
-    firstName: 'Maciek',
-    lastName: 'Mackowy',
-    email: 'kjhgkjk@gmail.com',
-    pesel: '0957120935',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '9',
-    firstName: 'Mariusz',
-    lastName: 'Pudzianowski',
-    email: 'fmsadfa@gmail.com',
-    pesel: '24132142141',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '4',
-    firstName: 'Janek',
-    lastName: 'Kowalski',
-    email: 'vczxcvxz@gmail.com',
-    pesel: '24765845681',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '5',
-    firstName: 'Maciek',
-    lastName: 'Mackowy',
-    email: 'kjhgkjk@gmail.com',
-    pesel: '0957120935',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '6',
-    firstName: 'Maciek',
-    lastName: 'Mackowy',
-    email: 'kjhgkjk@gmail.com',
-    pesel: '0957120935',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '7',
-    firstName: 'Dupa',
-    lastName: 'Mackowy',
-    email: 'kjhgkjk@gmail.com',
-    pesel: '0957120935',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-  {
-    id: '8',
-    firstName: 'Maciekfdsagsd',
-    lastName: 'Mackowy',
-    email: 'kjhgkjk@gmail.com',
-    pesel: '0957120935',
-    address: {
-      city: 'Janow',
-      street: 'Sokolska',
-      prePostalCode: 16,
-      postPostalCode: 130,
-      buildingNumber: 3,
-      apartmentNumber: undefined,
-    },
-  },
-]
+import { AppDispatch, RootState } from '../../store/index'
+import { deleteAllPatients, deletePatient, fetchPatients } from '../../store/Patient/api'
 
 export const Patients = () => {
   const [pageIndex, setPageIndex] = useState(0)
@@ -167,7 +30,18 @@ export const Patients = () => {
   const [query, setQuery] = useState<Query>(EuiSearchBar.Query.MATCH_ALL)
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedItems, setSelectedItems] = useState<Patient[]>([])
-  const [patientToEdit, setPatientToEdit] = useState<Patient | undefined>(undefined)
+  const [patientToEdit, setPatientToEdit] = useState<Patient>()
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+
+  const patients = useSelector<RootState>(({ patients }) => {
+    return patients.patients
+  }) as Patient[]
+
+  const dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    dispatch(fetchPatients())
+  }, [])
 
   const onTableChange = ({ page, sort }: CriteriaWithPagination<Patient>) => {
     const { index: pageIndex, size: pageSize } = page
@@ -186,10 +60,11 @@ export const Patients = () => {
   }
 
   const onClickDelete = () => {
+    dispatch(deleteAllPatients(selectedItems.map(p => p.id)))
     setSelectedItems([])
   }
 
-  const queriedItems = EuiSearchBar.Query.execute(query, PATIENTS, {
+  const queriedItems = EuiSearchBar.Query.execute(query, patients, {
     defaultFields: ['firstName', 'lastName', 'email', 'pesel'],
   })
 
@@ -203,11 +78,14 @@ export const Patients = () => {
 
   const actions: Action<Patient>[] = [
     {
-      name: 'Clone',
-      description: 'Clone this person',
+      name: 'Edit',
+      description: 'Edit this person',
       icon: 'pencil',
       type: 'icon',
-      onClick: (patient: Patient) => setPatientToEdit(patient),
+      onClick: (patient: Patient) => {
+        setPatientToEdit(patient)
+        setIsEditing(true)
+      },
     },
     {
       name: 'Delete',
@@ -215,7 +93,7 @@ export const Patients = () => {
       icon: 'trash',
       type: 'icon',
       color: 'danger',
-      onClick: () => console.log('delete'),
+      onClick: (patient: Patient) => dispatch(deletePatient(patient.id)),
     },
   ]
 
@@ -247,9 +125,9 @@ export const Patients = () => {
       name: 'Address',
       render: (address: Address) => (
         <EuiText>
-          {`${address.city} ${address.prePostalCode}-${address.postPostalCode}\n${address.street} ${
-            address.buildingNumber
-          } ${address.apartmentNumber ? address.apartmentNumber : ''}`}
+          {`${address.city} ${address.postalCode}\n${address.street} ${address.buildingNumber} ${
+            address.apartmentNumber ? address.apartmentNumber : ''
+          }`}
         </EuiText>
       ),
     },
@@ -333,6 +211,19 @@ export const Patients = () => {
     )
   }
 
+  const onClickAdd = () => {
+    setPatientToEdit(newPatient)
+    setIsEditing(false)
+  }
+
+  const renderAddButton = () => {
+    return (
+      <EuiButton color="success" iconType="plus" onClick={onClickAdd}>
+        Add new user
+      </EuiButton>
+    )
+  }
+
   const deleteButton = renderDeleteButton()
 
   return error ? (
@@ -350,7 +241,7 @@ export const Patients = () => {
           onChange={onChange}
         />
         <EuiFlexItem />
-        <EuiFlexItem>{deleteButton ? deleteButton : ''}</EuiFlexItem>
+        <EuiFlexItem>{deleteButton ? deleteButton : renderAddButton()}</EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer size="xl" />
       <EuiText size="xs">
@@ -358,19 +249,19 @@ export const Patients = () => {
       </EuiText>
       <EuiSpacer size="s" />
       <EuiHorizontalRule margin="none" style={{ height: 2 }} />
-      <EuiInMemoryTable
+      <EuiBasicTable
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         itemId="id"
         columns={columns}
         pagination={pagination}
-        // sorting={sorting}
+        sorting={sorting}
         onChange={onTableChange}
         isSelectable={true}
         selection={selection}
       />
       <EuiSpacer size="s" />
-      <PatientForm patientToEdit={patientToEdit} />
+      <PatientForm patientToEdit={patientToEdit} isEditing={isEditing} />
     </div>
   )
 }

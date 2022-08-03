@@ -17,7 +17,6 @@ export const NavBar = () => {
           name: 'Summary',
           id: htmlIdGenerator('basicExample')(),
           href: '/summary/',
-          emphasize: true,
         },
         {
           name: 'Patients',

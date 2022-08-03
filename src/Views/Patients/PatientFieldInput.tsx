@@ -1,5 +1,5 @@
 import { EuiFieldText, EuiFormRow } from '@elastic/eui'
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useEffect } from 'react'
 import useInput from '../../hooks/useInput'
 
 type Props = {
@@ -17,6 +17,7 @@ function PatientFieldInput(props: Props) {
     hasError: fieldHasError,
     valueChangeHandler: fieldChangeHandler,
     inputBlurHandler: fieldBlurHandler,
+    setValue,
   } = useInput(props.fieldValidation, props.initialValue)
 
   const onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
@@ -30,9 +31,13 @@ function PatientFieldInput(props: Props) {
     fieldChangeHandler(e)
   }
 
+  useEffect(() => {
+    setValue(props.initialValue)
+  }, [props.initialValue])
+
   return (
     <EuiFormRow label={props.label} isInvalid={fieldHasError}>
-      <EuiFieldText name="firstName" value={fieldValue} onChange={onChangeHandler} onBlur={fieldBlurHandler} />
+      <EuiFieldText name={props.label} value={fieldValue} onChange={onChangeHandler} onBlur={fieldBlurHandler} />
     </EuiFormRow>
   )
 }
