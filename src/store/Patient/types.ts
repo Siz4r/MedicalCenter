@@ -12,7 +12,7 @@ export interface PatientUpdateRequest {
   lastName: string
   email: string
   pesel: string
-  address: Address
+  addressWebInput: Address
 }
 
 export const newPatient: Patient = {

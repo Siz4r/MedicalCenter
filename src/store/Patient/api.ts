@@ -21,9 +21,8 @@ export const updatePatient = createAsyncThunk<void, { id: string; data: PatientU
   'patients/update',
   async ({ data, id }, { rejectWithValue, dispatch }) => {
     try {
-      await api.put(`/api/patients/${id}`, {
+      await api.put(`/api/patients/${id}`, data, {
         withCredentials: true,
-        data: JSON.stringify(data),
       })
     } catch (error: any) {
       return rejectWithValue(error)
@@ -35,9 +34,8 @@ export const addPatient = createAsyncThunk<string, PatientUpdateRequest, {}>(
   'patients/add',
   async (data, { rejectWithValue, dispatch }) => {
     try {
-      const response = await api.post('/api/patients', {
+      const response = await api.post('/api/patients', data, {
         withCredentials: true,
-        data: JSON.stringify(data),
       })
 
       return response.data
@@ -66,7 +64,7 @@ export const deleteAllPatients = createAsyncThunk<void, string[], {}>(
     try {
       api.delete(`/api/patients`, {
         withCredentials: true,
-        data: JSON.stringify(ids),
+        data: ids,
       })
     } catch (error: any) {
       rejectWithValue(error)

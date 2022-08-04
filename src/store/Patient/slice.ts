@@ -27,22 +27,23 @@ export const patientSlice = createSlice({
     builder.addCase(updatePatient.fulfilled, (state, action) => {
       const id = action.meta.arg.id
       const index = state.patients.findIndex(p => p.id === id)
-      state.patients[index] = { id, ...action.meta.arg.data }
+      state.patients[index] = { id, ...action.meta.arg.data, address: action.meta.arg.data.addressWebInput }
       state.isLoading = false
     })
 
     builder.addCase(addPatient.fulfilled, (state, action) => {
-      state.patients.push({ id: action.payload, ...action.meta.arg })
+      state.patients.push({ id: action.payload, ...action.meta.arg, address: action.meta.arg.addressWebInput })
       state.isLoading = false
     })
 
     builder.addCase(deletePatient.fulfilled, (state, action) => {
-      state.patients.filter(p => p.id !== action.meta.arg)
+      state.patients = state.patients.filter(p => p.id !== action.meta.arg)
       state.isLoading = false
     })
 
     builder.addCase(deleteAllPatients.fulfilled, (state, action) => {
-      state.patients.filter(p => !action.meta.arg.includes(p.id))
+      state.patients = state.patients.filter(p => !action.meta.arg.includes(p.id))
+
       state.isLoading = false
     })
 

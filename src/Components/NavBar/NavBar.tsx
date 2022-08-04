@@ -23,6 +23,11 @@ export const NavBar = () => {
           id: htmlIdGenerator('basicExample')(),
           href: '/patients/',
         },
+        {
+          name: 'Projects',
+          id: htmlIdGenerator('projects')(),
+          href: '/projects/',
+        },
       ],
     },
   ]

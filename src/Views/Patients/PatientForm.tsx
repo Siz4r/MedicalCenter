@@ -1,10 +1,10 @@
 import { EuiButton, EuiFlexGrid, EuiFlexGroup, EuiFlexItem, EuiForm, EuiSpacer } from '@elastic/eui'
 import { Patient } from '../../store/Patient/types'
 import PatientFieldInput from './PatientFieldInput'
-import React, {FormEvent, useState} from 'react'
+import React, { FormEvent, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../store'
-import { addPatient } from '../../store/Patient/api'
+import { addPatient, updatePatient } from '../../store/Patient/api'
 
 type Props = {
   patientToEdit: Patient | undefined
@@ -23,15 +23,15 @@ export const PatientForm = (props: Props) => {
     return <div></div>
   }
 
-  const [isFirstNameValid, setIsFirstNameValid] = useState(false)
-  const [isLastNameValid, setIsLastNameValid] = useState(false)
-  const [isEmailValid, setIsEmailValid] = useState(false)
-  const [isPeselValid, setIsPeselValid] = useState(false)
-  const [isStreetValid, setIsStreetValid] = useState(false)
-  const [isCityValid, setIsCityValid] = useState(false)
-  const [isPostalCodeValid, setIsPostalCodeValid] = useState(false)
-  const [isBuildingNumberValid, setIsBuildingNumberValid] = useState(false)
-  const [isApartmentNumberValid, setIsApartmentNumberValid] = useState(false)
+  const [isFirstNameValid, setIsFirstNameValid] = useState(props.isEditing)
+  const [isLastNameValid, setIsLastNameValid] = useState(props.isEditing)
+  const [isEmailValid, setIsEmailValid] = useState(props.isEditing)
+  const [isPeselValid, setIsPeselValid] = useState(props.isEditing)
+  const [isStreetValid, setIsStreetValid] = useState(props.isEditing)
+  const [isCityValid, setIsCityValid] = useState(props.isEditing)
+  const [isPostalCodeValid, setIsPostalCodeValid] = useState(props.isEditing)
+  const [isBuildingNumberValid, setIsBuildingNumberValid] = useState(props.isEditing)
+  const [isApartmentNumberValid, setIsApartmentNumberValid] = useState(props.isEditing)
 
   const [postalCode, setPostalCode] = useState(props.patientToEdit.address.postalCode)
   const [buildingNumber, setBuildingNumber] = useState(props.patientToEdit.address.buildingNumber.toString())
@@ -75,33 +75,36 @@ export const PatientForm = (props: Props) => {
       )
     }
 
+    console.log(isBuildingNumberValid)
     if (validateInputs()) {
       try {
-        console.log(isCityValid)
-        dispatch(
-          addPatient({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            pesel: pesel,
-            address: {
-              apartmentNumber: parseInt(apartmentNumber),
-              postalCode: postalCode,
-              buildingNumber: parseInt(buildingNumber),
-              street: street,
-              city: city,
-            },
-          })
-        )
+        const data = {
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          pesel: pesel,
+          addressWebInput: {
+            apartmentNumber: parseInt(apartmentNumber),
+            postalCode: postalCode,
+            buildingNumber: parseInt(buildingNumber),
+            street: street,
+            city: city,
+          },
+        }
+        if (props.isEditing && props.patientToEdit)
+          dispatch(
+            updatePatient({
+              id: props.patientToEdit.id,
+              data: data,
+            })
+          )
+        else dispatch(addPatient(data))
       } catch (error: any) {}
     }
   }
 
   return (
-    <EuiForm
-      component="form"
-      onSubmit={onSubmit}
-    >
+    <EuiForm component="form" onSubmit={onSubmit}>
       <EuiFlexGrid style={{ maxWidth: 1200 }} component="span" columns={2}>
         <EuiFlexItem grow={2}>
           <PatientFieldInput

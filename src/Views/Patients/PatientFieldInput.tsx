@@ -22,11 +22,8 @@ function PatientFieldInput(props: Props) {
 
   const onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
     e.preventDefault()
-
-    if (fieldIsValid) {
-      props.setValue(e.currentTarget.value)
-      props.setValid(true)
-    }
+    props.setValid(!fieldHasError)
+    props.setValue(e.currentTarget.value)
 
     fieldChangeHandler(e)
   }
@@ -37,7 +34,13 @@ function PatientFieldInput(props: Props) {
 
   return (
     <EuiFormRow label={props.label} isInvalid={fieldHasError}>
-      <EuiFieldText name={props.label} value={fieldValue} onChange={onChangeHandler} onBlur={fieldBlurHandler} />
+      <EuiFieldText
+        name={props.label}
+        value={fieldValue}
+        onChange={onChangeHandler}
+        onBlur={fieldBlurHandler}
+        defaultValue={props.initialValue}
+      />
     </EuiFormRow>
   )
 }
