@@ -17,12 +17,16 @@ export const NavBar = () => {
           name: 'Summary',
           id: htmlIdGenerator('basicExample')(),
           href: '/summary/',
-          emphasize: true,
         },
         {
           name: 'Patients',
           id: htmlIdGenerator('basicExample')(),
           href: '/patients/',
+        },
+        {
+          name: 'Projects',
+          id: htmlIdGenerator('projects')(),
+          href: '/projects/',
         },
       ],
     },
