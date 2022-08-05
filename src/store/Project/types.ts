@@ -11,3 +11,7 @@ export const newProject: Project = {
   name: '',
   patients: [],
 }
+
+export interface ProjectWebInput {
+  name: string
+}
