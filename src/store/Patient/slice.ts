@@ -2,8 +2,6 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { Patient } from './types'
 import { addPatient, deleteAllPatients, deletePatient, fetchPatients, updatePatient } from './api'
 
-type IPatientSlice = Patient | boolean
-
 interface PatientState {
   patients: Patient[]
   isLoading: boolean

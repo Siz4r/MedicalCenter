@@ -117,6 +117,7 @@ export const Patients = () => {
         initializingRecord={newPatient}
         setRecordToEdit={setPatientToEdit}
         nameOfRecord="Patient"
+        setIsEditing={setIsEditing}
       />
       <PatientForm patientToEdit={patientToEdit} isEditing={isEditing} />
     </div>

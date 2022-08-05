@@ -1,10 +1,11 @@
 import { EuiButton, EuiFlexGrid, EuiFlexGroup, EuiFlexItem, EuiForm, EuiSpacer } from '@elastic/eui'
 import { Patient } from '../../store/Patient/types'
-import PatientFieldInput from './PatientFieldInput'
+import FieldInput from './PatientFieldInput'
 import React, { FormEvent, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../store'
 import { addPatient, updatePatient } from '../../store/Patient/api'
+import { useEffect } from 'react'
 
 type Props = {
   patientToEdit: Patient | undefined
@@ -13,8 +14,8 @@ type Props = {
 
 const isNotEmpty = (value: string) => value.trim().length > 2
 const hasOnlyNumbers = (value: string) => /^\d+$/.test(value)
-const hasOnlyLetters = (value: string) => !/[^a-zżźółćśęąń]/i.test(value)
-const correctTextInput = (value: string) => isNotEmpty(value) && hasOnlyLetters(value)
+const hasOnlyLetters = (value: string) => !/[^a-zżźółćśęąń ]/i.test(value)
+export const correctTextInput = (value: string) => isNotEmpty(value) && hasOnlyLetters(value)
 
 export const PatientForm = (props: Props) => {
   const patient = props.patientToEdit
@@ -46,17 +47,7 @@ export const PatientForm = (props: Props) => {
   const [city, setCity] = useState(props.patientToEdit.address.city)
   const dispatch = useDispatch<AppDispatch>()
 
-  const renderSubmitButton = () => {
-    return props.isEditing ? (
-      <EuiButton type="submit" color="warning">
-        Edit patient
-      </EuiButton>
-    ) : (
-      <EuiButton type="submit" color="success">
-        Add patient
-      </EuiButton>
-    )
-  }
+  useEffect(() => {}, [props.isEditing])
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -75,7 +66,6 @@ export const PatientForm = (props: Props) => {
       )
     }
 
-    console.log(isBuildingNumberValid)
     if (validateInputs()) {
       try {
         const data = {
@@ -107,7 +97,7 @@ export const PatientForm = (props: Props) => {
     <EuiForm component="form" onSubmit={onSubmit}>
       <EuiFlexGrid style={{ maxWidth: 1200 }} component="span" columns={2}>
         <EuiFlexItem grow={2}>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={correctTextInput}
             initialValue={props.patientToEdit.firstName}
             label="First name"
@@ -116,7 +106,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem grow={2}>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={correctTextInput}
             initialValue={props.patientToEdit.lastName}
             label="Last name"
@@ -125,7 +115,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={isNotEmpty}
             initialValue={props.patientToEdit.email}
             label="Email"
@@ -134,7 +124,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={hasOnlyNumbers}
             initialValue={props.patientToEdit.pesel}
             label="Pesel"
@@ -143,7 +133,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={correctTextInput}
             initialValue={props.patientToEdit.address.city}
             label="City"
@@ -152,7 +142,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem style={{ maxWidth: 100 }}>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={isNotEmpty}
             initialValue={props.patientToEdit.address.postalCode}
             label="Postal code"
@@ -161,7 +151,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={correctTextInput}
             initialValue={props.patientToEdit.address.street}
             label="Street"
@@ -170,7 +160,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem style={{ maxWidth: 100 }}>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={hasOnlyNumbers}
             initialValue={
               props.patientToEdit.address.buildingNumber === 0
@@ -183,7 +173,7 @@ export const PatientForm = (props: Props) => {
           />
         </EuiFlexItem>
         <EuiFlexItem style={{ maxWidth: 200 }}>
-          <PatientFieldInput
+          <FieldInput
             fieldValidation={hasOnlyNumbers}
             initialValue={
               props.patientToEdit.address.apartmentNumber ? props.patientToEdit.address.apartmentNumber.toString() : ''
@@ -196,7 +186,15 @@ export const PatientForm = (props: Props) => {
         <EuiFlexGroup alignItems="center">
           <EuiFlexItem>
             <EuiSpacer size="m" />
-            <div>{renderSubmitButton()}</div>
+            {props.isEditing ? (
+              <EuiButton type="submit" color="warning">
+                Edit patient
+              </EuiButton>
+            ) : (
+              <EuiButton type="submit" color="success">
+                Add patient
+              </EuiButton>
+            )}
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexGrid>

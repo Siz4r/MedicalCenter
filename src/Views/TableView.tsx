@@ -30,6 +30,7 @@ type Props<T> = {
   initializingRecord: T
   setRecordToEdit: (record: T) => void
   nameOfRecord: string
+  setIsEditing: (data: boolean) => void
 }
 
 export const TableView = <T extends { id: string }>(props: Props<T>) => {
@@ -41,7 +42,6 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedItems, setSelectedItems] = useState<T[]>([])
   const [recordToEdit, setRecordToEdit] = useState<T>()
-  const [isEditing, setIsEditing] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>()
 
   const onTableChange = ({ page, sort }: CriteriaWithPagination<T>) => {
@@ -89,7 +89,7 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
 
   const onClickAdd = () => {
     props.setRecordToEdit(props.initializingRecord)
-    setIsEditing(false)
+    props.setIsEditing(false)
   }
 
   const renderAddButton = () => {
