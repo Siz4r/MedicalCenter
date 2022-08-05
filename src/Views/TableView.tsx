@@ -15,10 +15,9 @@ import {
   EuiHorizontalRule,
 } from '@elastic/eui'
 import { AsyncThunk } from '@reduxjs/toolkit'
-import React, { FunctionComponent, useState } from 'react'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
-import { deleteAllPatients } from '../store/Patient/api'
 
 type Props<T> = {
   records: any[]
@@ -30,7 +29,6 @@ type Props<T> = {
   initializingRecord: T
   setRecordToEdit: (record: T) => void
   nameOfRecord: string
-  setIsEditing: (data: boolean) => void
 }
 
 export const TableView = <T extends { id: string }>(props: Props<T>) => {
@@ -41,7 +39,6 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
   const [query, setQuery] = useState<Query>(EuiSearchBar.Query.MATCH_ALL)
   const [error, setError] = useState<string | undefined>(undefined)
   const [selectedItems, setSelectedItems] = useState<T[]>([])
-  const [recordToEdit, setRecordToEdit] = useState<T>()
   const dispatch = useDispatch<AppDispatch>()
 
   const onTableChange = ({ page, sort }: CriteriaWithPagination<T>) => {
@@ -83,19 +80,6 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
     return (
       <EuiButton color="danger" iconType="trash" onClick={onClickDelete}>
         Delete {selectedItems.length} {props.nameOfRecord.toLowerCase() + 's'}
-      </EuiButton>
-    )
-  }
-
-  const onClickAdd = () => {
-    props.setRecordToEdit(props.initializingRecord)
-    props.setIsEditing(false)
-  }
-
-  const renderAddButton = () => {
-    return (
-      <EuiButton color="success" iconType="plus" onClick={onClickAdd}>
-        Add new {props.nameOfRecord.toLowerCase()}
       </EuiButton>
     )
   }
@@ -157,7 +141,6 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
           }}
           onChange={onChange}
         />
-        <EuiFlexItem>{deleteButton ? deleteButton : renderAddButton()}</EuiFlexItem>
       </EuiFlexGroup>
       <EuiSpacer size="xl" />
       <EuiText size="xs">

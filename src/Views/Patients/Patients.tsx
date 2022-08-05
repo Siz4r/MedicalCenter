@@ -1,23 +1,88 @@
-import { EuiBasicTableColumn, EuiText } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiText, EuiForm, EuiFlexGroup, EuiFlexGrid, EuiFlexItem, EuiButton } from '@elastic/eui'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Address, newPatient, Patient } from '../../store/Patient/types'
 import { PatientForm } from './PatientForm'
 import { AppDispatch, RootState } from '../../store/index'
-import { deleteAllPatients, deletePatient, fetchPatients } from '../../store/Patient/api'
+import { addPatient, deleteAllPatients, deletePatient, fetchPatients, updatePatient } from '../../store/Patient/api'
 import { TableView } from '../TableView'
+import FieldInput from './PatientFieldInput'
+
+const isNotEmpty = (value: string) => value.trim().length > 2
+const hasOnlyNumbers = (value: string) => /^\d+$/.test(value)
+const hasOnlyLetters = (value: string) => !/[^a-zżźółćśęąń ]/i.test(value)
+export const correctTextInput = (value: string) => isNotEmpty(value) && hasOnlyLetters(value)
 
 export const Patients = () => {
   const [error, setError] = useState<string | undefined>(undefined)
-  const [patientToEdit, setPatientToEdit] = useState<Patient>()
+  const [patientToEdit, setPatientToEdit] = useState<Patient>(newPatient)
   const [isEditing, setIsEditing] = useState<boolean>(false)
+
+  const [isFirstNameValid, setIsFirstNameValid] = useState(false)
+  const [isLastNameValid, setIsLastNameValid] = useState(false)
+  const [isEmailValid, setIsEmailValid] = useState(false)
+  const [isPeselValid, setIsPeselValid] = useState(false)
+  const [isStreetValid, setIsStreetValid] = useState(false)
+  const [isCityValid, setIsCityValid] = useState(false)
+  const [isPostalCodeValid, setIsPostalCodeValid] = useState(false)
+  const [isBuildingNumberValid, setIsBuildingNumberValid] = useState(false)
+  const [isApartmentNumberValid, setIsApartmentNumberValid] = useState(false)
+
+  const [postalCode, setPostalCode] = useState('')
+  const [buildingNumber, setBuildingNumber] = useState('')
+  const [apartmentNumber, setApartmentNumber] = useState('')
+  const [firstName, setFirstName] = useState<string>('')
+  const [lastName, setLastName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [pesel, setPesel] = useState<string>('')
+  const [street, setStreet] = useState('')
+  const [city, setCity] = useState('')
+  const dispatch = useDispatch<AppDispatch>()
 
   const patients = useSelector<RootState>(({ patients }) => {
     return patients.patients
   }) as Patient[]
 
-  const dispatch = useDispatch<AppDispatch>()
+  function validateInputs() {
+    return (
+      isStreetValid &&
+      isApartmentNumberValid &&
+      isBuildingNumberValid &&
+      isCityValid &&
+      isEmailValid &&
+      isFirstNameValid &&
+      isLastNameValid &&
+      isPeselValid &&
+      isPostalCodeValid
+    )
+  }
+
+  const data = {
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    pesel: pesel,
+    addressWebInput: {
+      apartmentNumber: parseInt(apartmentNumber),
+      postalCode: postalCode,
+      buildingNumber: parseInt(buildingNumber),
+      street: street,
+      city: city,
+    },
+  }
+
+  const onAddHandler = () => {
+    if (validateInputs()) {
+      dispatch(addPatient(data))
+    }
+  }
+
+  const onEditHandler = () => {
+    if (validateInputs() && patientToEdit) {
+      dispatch(updatePatient({ id: patientToEdit.id, data: data }))
+    }
+  }
 
   useEffect(() => {
     dispatch(fetchPatients())
@@ -31,6 +96,7 @@ export const Patients = () => {
       type: 'icon',
       onClick: (patient: Patient) => {
         setPatientToEdit(patient)
+        setFirstName(patient.firstName)
         setIsEditing(true)
       },
     },
@@ -117,9 +183,108 @@ export const Patients = () => {
         initializingRecord={newPatient}
         setRecordToEdit={setPatientToEdit}
         nameOfRecord="Patient"
-        setIsEditing={setIsEditing}
       />
-      <PatientForm patientToEdit={patientToEdit} isEditing={isEditing} />
+      <EuiForm component="form">
+        <EuiFlexGrid style={{ maxWidth: 1200 }} component="span" columns={2}>
+          <EuiFlexItem grow={2}>
+            <FieldInput
+              fieldValidation={correctTextInput}
+              initialValue={firstName}
+              label="First name"
+              setValue={setFirstName}
+              setValid={setIsFirstNameValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem grow={2}>
+            <FieldInput
+              fieldValidation={correctTextInput}
+              initialValue={patientToEdit.lastName}
+              label="Last name"
+              setValue={setLastName}
+              setValid={setIsLastNameValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <FieldInput
+              fieldValidation={isNotEmpty}
+              initialValue={patientToEdit.email}
+              label="Email"
+              setValue={setEmail}
+              setValid={setIsEmailValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <FieldInput
+              fieldValidation={hasOnlyNumbers}
+              initialValue={patientToEdit.pesel}
+              label="Pesel"
+              setValue={setPesel}
+              setValid={setIsPeselValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <FieldInput
+              fieldValidation={correctTextInput}
+              initialValue={patientToEdit.address.city}
+              label="City"
+              setValue={setCity}
+              setValid={setIsCityValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem style={{ maxWidth: 100 }}>
+            <FieldInput
+              fieldValidation={isNotEmpty}
+              initialValue={patientToEdit.address.postalCode}
+              label="Postal code"
+              setValue={setPostalCode}
+              setValid={setIsPostalCodeValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <FieldInput
+              fieldValidation={correctTextInput}
+              initialValue={patientToEdit.address.street}
+              label="Street"
+              setValue={setStreet}
+              setValid={setIsStreetValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem style={{ maxWidth: 100 }}>
+            <FieldInput
+              fieldValidation={hasOnlyNumbers}
+              initialValue={
+                patientToEdit.address.buildingNumber === 0 ? '' : patientToEdit.address.buildingNumber.toString()
+              }
+              label="Building"
+              setValue={setBuildingNumber}
+              setValid={setIsBuildingNumberValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexItem style={{ maxWidth: 200 }}>
+            <FieldInput
+              fieldValidation={hasOnlyNumbers}
+              initialValue={
+                patientToEdit.address.apartmentNumber ? patientToEdit.address.apartmentNumber.toString() : ''
+              }
+              label="Apartment Number"
+              setValue={setApartmentNumber}
+              setValid={setIsApartmentNumberValid}
+            />
+          </EuiFlexItem>
+          <EuiFlexGroup alignItems="center">
+            <EuiFlexItem>
+              <EuiButton onClick={onAddHandler} color="success">
+                Add patient
+              </EuiButton>
+            </EuiFlexItem>
+            <EuiFlexItem>
+              <EuiButton onClick={onEditHandler} color="warning">
+                Edit patient
+              </EuiButton>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        </EuiFlexGrid>
+      </EuiForm>
     </div>
   )
 }

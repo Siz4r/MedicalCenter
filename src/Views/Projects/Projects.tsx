@@ -105,7 +105,6 @@ export const Projects = () => {
         initializingRecord={newProject}
         setRecordToEdit={setProjectToEdit}
         nameOfRecord="Project"
-        setIsEditing={(data: boolean) => {}}
       />
       <EuiForm>
         <EuiFlexGroup alignItems="flexEnd">

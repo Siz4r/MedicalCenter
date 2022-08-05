@@ -20,7 +20,6 @@ function FieldInput(props: Props) {
     setValue,
   } = useInput(props.fieldValidation, props.initialValue)
 
-  props.setValid(!fieldHasError)
   const onChangeHandler = (e: React.FormEvent<HTMLInputElement>) => {
     e.preventDefault()
     props.setValid(!fieldHasError)
@@ -31,6 +30,8 @@ function FieldInput(props: Props) {
 
   useEffect(() => {
     setValue(props.initialValue)
+    props.setValid(!fieldHasError)
+    props.setValue(props.initialValue)
   }, [props.initialValue])
 
   return (
