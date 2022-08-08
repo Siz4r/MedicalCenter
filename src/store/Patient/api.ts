@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { api } from '../../core/apifetch'
 import { Patient, PatientUpdateRequest } from './types'
 
-export const fetchPatients = createAsyncThunk<Patient[], void, {}>(
+export const getPatients = createAsyncThunk<Patient[], void, {}>(
   'patients/get',
   async (_, { dispatch, rejectWithValue }) => {
     try {

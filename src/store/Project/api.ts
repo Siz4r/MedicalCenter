@@ -1,6 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { api } from '../../core/apifetch'
-import { Project, ProjectWebInput } from './types'
+import { Project, ProjectWebInput, ProjectResponse } from './types'
+import { serializeProjects } from './serializer'
+import { Patient } from '../Patient/types'
 export const addProject = createAsyncThunk<string, ProjectWebInput, {}>(
   'projects/add',
   async (data, { rejectWithValue }) => {
@@ -22,7 +24,7 @@ export const getProjects = createAsyncThunk<Project[], void, {}>('projects/get',
       withCredentials: true,
     })
 
-    return response.data
+    return serializeProjects(response.data)
   } catch (error: any) {
     return rejectWithValue(error)
   }
@@ -61,6 +63,57 @@ export const deleteAllProjects = createAsyncThunk<void, string[], {}>(
       })
     } catch (error: any) {
       return rejectWithValue(error)
+    }
+  }
+)
+
+export const addPatientToProject = createAsyncThunk<string, { patient: Patient; projectId: string }, {}>(
+  'projects/addPatientToProject',
+  async (data, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.post(
+        `/api/projectParticipant/project/${data.projectId}/patient/${data.patient.id}`,
+        undefined,
+        {
+          withCredentials: true,
+        }
+      )
+
+      return response.data
+    } catch (error: any) {
+      rejectWithValue(error)
+    }
+  }
+)
+
+export const deletePatientFromProject = createAsyncThunk<
+  void,
+  { projectParticipationId: string; projectId: string },
+  {}
+>('projects/deletePatientFromProject', async (data, { rejectWithValue, dispatch }) => {
+  try {
+    await api.delete(`/api/projectParticipant/${data.projectParticipationId}`, {
+      withCredentials: true,
+    })
+  } catch (error: any) {
+    rejectWithValue(error)
+  }
+})
+
+export const updatePatientConsent = createAsyncThunk<void, { projectParticipationId: string; projectId: string }, {}>(
+  'projects/updatePatientConsent',
+  async (data, { rejectWithValue }) => {
+    try {
+      await api.put(
+        `/api/projectParticipant/${data.projectParticipationId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      )
+    } catch (error: any) {
+      console.log(error.response)
+      return rejectWithValue(error.response)
     }
   }
 )
