@@ -1,8 +1,10 @@
 import { EuiSideNav, htmlIdGenerator } from '@elastic/eui'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const NavBar = () => {
   const [isSideNavOpenOnMobile, setisSideNavOpenOnMobile] = useState(false)
+  const navigate = useNavigate()
 
   const toggleOpenOnMobile = () => {
     setisSideNavOpenOnMobile(!isSideNavOpenOnMobile)
@@ -16,17 +18,22 @@ export const NavBar = () => {
         {
           name: 'Summary',
           id: htmlIdGenerator('basicExample')(),
-          href: '/summary/',
+          onClick: () => navigate('/summary/'),
         },
         {
           name: 'Patients',
           id: htmlIdGenerator('basicExample')(),
-          href: '/patients/',
+          onClick: () => navigate('/patients/'),
         },
         {
           name: 'Projects',
           id: htmlIdGenerator('projects')(),
-          href: '/projects/',
+          onClick: () => navigate('/projects/'),
+        },
+        {
+          name: 'Project Participations',
+          id: htmlIdGenerator('participation')(),
+          onClick: () => navigate('/projectParticipations/'),
         },
       ],
     },

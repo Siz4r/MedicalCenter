@@ -26,8 +26,6 @@ type Props<T> = {
   schema: any
   deleteAll: AsyncThunk<void, string[], {}>
   delete: AsyncThunk<void, string, {}>
-  initializingRecord: T
-  setRecordToEdit: (record: T) => void
   nameOfRecord: string
 }
 
@@ -127,6 +125,15 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
     }
   }
 
+  const getRowProps = (item: T) => {
+    const { id } = item
+    return {
+      'data-test-subj': `row-${id}`,
+      className: 'customRowClass',
+      onClick: () => {},
+    }
+  }
+
   const schema = props.schema
 
   return (
@@ -141,7 +148,9 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
           }}
           onChange={onChange}
         />
+        <EuiFlexItem>{deleteButton ? deleteButton : <div></div>}</EuiFlexItem>
       </EuiFlexGroup>
+
       <EuiSpacer size="xl" />
       <EuiText size="xs">
         Showing {resultsCount} <strong>{props.nameOfRecord + 's'}</strong>
@@ -155,6 +164,22 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
         columns={props.columns}
         pagination={pagination}
         sorting={sorting}
+        style={{ color: 'red' }}
+        rowProps={i => {
+          if (i.consentToParticipate !== undefined) {
+            return i.consentToParticipate
+              ? {
+                  style: {
+                    background: 'green',
+                  },
+                }
+              : {
+                  style: {
+                    background: 'red',
+                  },
+                }
+          }
+        }}
         onChange={onTableChange}
         isSelectable={true}
         selection={selection}

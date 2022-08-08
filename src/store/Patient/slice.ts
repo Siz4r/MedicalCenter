@@ -1,6 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { Patient } from './types'
-import { addPatient, deleteAllPatients, deletePatient, fetchPatients, updatePatient } from './api'
+import { addPatient, deleteAllPatients, deletePatient, getPatients, updatePatient } from './api'
 
 interface PatientState {
   patients: Patient[]
@@ -17,7 +17,7 @@ export const patientSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchPatients.fulfilled, (state, action) => {
+    builder.addCase(getPatients.fulfilled, (state, action) => {
       state.patients = action.payload
       state.isLoading = false
     })
@@ -41,7 +41,6 @@ export const patientSlice = createSlice({
 
     builder.addCase(deleteAllPatients.fulfilled, (state, action) => {
       state.patients = state.patients.filter(p => !action.meta.arg.includes(p.id))
-
       state.isLoading = false
     })
 
@@ -49,7 +48,7 @@ export const patientSlice = createSlice({
       isAnyOf(
         deletePatient.pending,
         deleteAllPatients.pending,
-        fetchPatients.pending,
+        getPatients.pending,
         addPatient.pending,
         updatePatient.pending
       ),
@@ -64,8 +63,8 @@ export const patientSlice = createSlice({
         deletePatient.rejected,
         deleteAllPatients.fulfilled,
         deleteAllPatients.rejected,
-        fetchPatients.fulfilled,
-        fetchPatients.rejected,
+        getPatients.fulfilled,
+        getPatients.rejected,
         addPatient.fulfilled,
         addPatient.rejected,
         updatePatient.fulfilled,

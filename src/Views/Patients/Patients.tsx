@@ -5,9 +5,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Address, newPatient, Patient } from '../../store/Patient/types'
 import { PatientForm } from './PatientForm'
 import { AppDispatch, RootState } from '../../store/index'
-import { addPatient, deleteAllPatients, deletePatient, fetchPatients, updatePatient } from '../../store/Patient/api'
+import { addPatient, deleteAllPatients, deletePatient, getPatients, updatePatient } from '../../store/Patient/api'
 import { TableView } from '../TableView'
 import FieldInput from './PatientFieldInput'
+import { useAppSelector } from '../../hooks/reduxHooks'
 
 const isNotEmpty = (value: string) => value.trim().length > 2
 const hasOnlyNumbers = (value: string) => /^\d+$/.test(value)
@@ -40,9 +41,9 @@ export const Patients = () => {
   const [city, setCity] = useState('')
   const dispatch = useDispatch<AppDispatch>()
 
-  const patients = useSelector<RootState>(({ patients }) => {
+  const patients = useAppSelector(({ patients }) => {
     return patients.patients
-  }) as Patient[]
+  })
 
   function validateInputs() {
     return (
@@ -85,7 +86,7 @@ export const Patients = () => {
   }
 
   useEffect(() => {
-    dispatch(fetchPatients())
+    dispatch(getPatients())
   }, [])
 
   const actions: Action<Patient>[] = [
@@ -180,8 +181,6 @@ export const Patients = () => {
         compare={(a, b) => a.firstName.localeCompare(b.firstName)}
         deleteAll={deleteAllPatients}
         delete={deletePatient}
-        initializingRecord={newPatient}
-        setRecordToEdit={setPatientToEdit}
         nameOfRecord="Patient"
       />
       <EuiForm component="form">

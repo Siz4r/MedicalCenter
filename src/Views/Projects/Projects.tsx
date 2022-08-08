@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '../../store'
 import { RootState } from '../../store/index'
 import { deleteProject, deleteAllProjects, getProjects, addProject, updateProject } from '../../store/Project/api'
+import { Patient } from '../../store/Patient/types'
 
 export const Projects = () => {
   const [projectToEdit, setProjectToEdit] = useState<Project>()
@@ -88,6 +89,11 @@ export const Projects = () => {
       'data-test-subj': 'firstNameCell',
     },
     {
+      field: 'participants',
+      name: 'Number of participants',
+      render: (participants: Patient[]) => participants.length,
+    },
+    {
       name: 'Actions',
       actions,
     },
@@ -102,8 +108,6 @@ export const Projects = () => {
         schema={schema}
         delete={deleteProject}
         deleteAll={deleteAllProjects}
-        initializingRecord={newProject}
-        setRecordToEdit={setProjectToEdit}
         nameOfRecord="Project"
       />
       <EuiForm>
