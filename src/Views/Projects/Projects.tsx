@@ -1,16 +1,15 @@
 import { EuiBasicTableColumn, EuiForm, EuiFlexGroup, EuiFormRow, EuiFlexItem, EuiButton, EuiSpacer } from '@elastic/eui'
-import React, { FormEvent, useEffect, useState } from 'react'
-import { newProject, Project } from '../../store/Project/types'
+import React, { useEffect, useState } from 'react'
+import { Project } from '../../store/Project/types'
 import { TableView } from '../TableView'
-import { deletePatient, deleteAllPatients } from '../../store/Patient/api'
 import FieldInput from '../Patients/PatientFieldInput'
 import { correctTextInput } from '../Patients/PatientForm'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../store'
-import { RootState } from '../../store/index'
 import { deleteProject, deleteAllProjects, getProjects, addProject, updateProject } from '../../store/Project/api'
 import { Patient } from '../../store/Patient/types'
+import { useAppSelector } from '../../hooks/reduxHooks'
 
 export const Projects = () => {
   const [projectToEdit, setProjectToEdit] = useState<Project>()
@@ -19,7 +18,7 @@ export const Projects = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>()
 
-  const projects = useSelector<RootState>(({ projects }) => {
+  const projects = useAppSelector(({ projects }) => {
     {
       return projects.projects
     }
@@ -106,7 +105,6 @@ export const Projects = () => {
         compare={(a, b) => a.name.localeCompare(b.name)}
         columns={columns}
         schema={schema}
-        delete={deleteProject}
         deleteAll={deleteAllProjects}
         nameOfRecord="Project"
       />

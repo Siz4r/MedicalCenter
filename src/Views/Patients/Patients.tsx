@@ -1,10 +1,9 @@
 import { EuiBasicTableColumn, EuiText, EuiForm, EuiFlexGroup, EuiFlexGrid, EuiFlexItem, EuiButton } from '@elastic/eui'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
 import { useEffect, useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { Address, newPatient, Patient } from '../../store/Patient/types'
-import { PatientForm } from './PatientForm'
-import { AppDispatch, RootState } from '../../store/index'
+import { AppDispatch } from '../../store'
 import { addPatient, deleteAllPatients, deletePatient, getPatients, updatePatient } from '../../store/Patient/api'
 import { TableView } from '../TableView'
 import FieldInput from './PatientFieldInput'
@@ -16,9 +15,7 @@ const hasOnlyLetters = (value: string) => !/[^a-zżźółćśęąń ]/i.test(val
 export const correctTextInput = (value: string) => isNotEmpty(value) && hasOnlyLetters(value)
 
 export const Patients = () => {
-  const [error, setError] = useState<string | undefined>(undefined)
   const [patientToEdit, setPatientToEdit] = useState<Patient>(newPatient)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const [isFirstNameValid, setIsFirstNameValid] = useState(false)
   const [isLastNameValid, setIsLastNameValid] = useState(false)
@@ -98,7 +95,6 @@ export const Patients = () => {
       onClick: (patient: Patient) => {
         setPatientToEdit(patient)
         setFirstName(patient.firstName)
-        setIsEditing(true)
       },
     },
     {
@@ -180,7 +176,6 @@ export const Patients = () => {
         columns={columns}
         compare={(a, b) => a.firstName.localeCompare(b.firstName)}
         deleteAll={deleteAllPatients}
-        delete={deletePatient}
         nameOfRecord="Patient"
       />
       <EuiForm component="form">

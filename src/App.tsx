@@ -5,6 +5,7 @@ import { Patients } from './Views/Patients/Patients'
 import { ProjectParticipation } from './Views/ProjectParticipation/ProjectParticipation'
 import { Projects } from './Views/Projects/Projects'
 import { Summary } from './Views/Summary/Summary'
+import { Researches } from './Views/Researches/Researches'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/patients" element={<Patients />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projectParticipations" element={<ProjectParticipation />} />
+        <Route path="/researches" element={<Researches />} />
       </Routes>
     </EuiPageTemplate>
   )

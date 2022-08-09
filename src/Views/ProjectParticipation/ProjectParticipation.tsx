@@ -145,7 +145,6 @@ export const ProjectParticipation = () => {
                         },
                       ]}
                       schema={schema}
-                      delete={deleteProject}
                       deleteAll={deleteAllPatients}
                       nameOfRecord="Participants in project"
                     />
@@ -206,7 +205,6 @@ export const ProjectParticipation = () => {
                   },
                 ]}
                 schema={schema}
-                delete={deleteProject}
                 deleteAll={deleteAllPatients}
                 nameOfRecord="System Patient"
               />

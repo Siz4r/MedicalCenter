@@ -35,6 +35,11 @@ export const NavBar = () => {
           id: htmlIdGenerator('participation')(),
           onClick: () => navigate('/projectParticipations/'),
         },
+        {
+          name: 'Researches',
+          id: htmlIdGenerator('research')(),
+          onClick: () => navigate('/researches/'),
+        },
       ],
     },
   ]
