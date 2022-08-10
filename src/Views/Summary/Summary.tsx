@@ -4,13 +4,13 @@ import { useProjects } from '../../hooks/useProjects'
 import { useResearches } from '../../hooks/useResearches'
 
 export const Summary = () => {
-  const { patientsLoading, patients } = usePatients({
+  const { isLoading: patientsLoading, patients } = usePatients({
     fetchOnMount: true,
   })
-  const { projectsLoading, projects } = useProjects({
+  const { isLoading: projectsLoading, projects } = useProjects({
     fetchOnMount: true,
   })
-  const { researchesLoading, researches } = useResearches({
+  const { isLoading: researchesLoading, researches } = useResearches({
     fetchOnMount: true,
   })
 

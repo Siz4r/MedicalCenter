@@ -3,24 +3,23 @@ import { TableView } from '../TableView'
 import { ReactNode, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiScreenReaderOnly,
+  EuiButton,
   EuiButtonIcon,
-  RIGHT_ALIGNMENT,
   EuiDescriptionList,
+  EuiFieldText,
   EuiForm,
   EuiFormRow,
-  EuiFieldText,
-  EuiTextArea,
-  EuiButton,
   EuiLoadingSpinner,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiScreenReaderOnly,
+  EuiTextArea,
+  RIGHT_ALIGNMENT,
 } from '@elastic/eui'
 import { useAppDispatch } from '../../hooks/reduxHooks'
 import useInput from '../../hooks/useInput'
 import { correctTextInput } from '../Patients/PatientForm'
-import { createResearch, deleteAllResearchesByIds, deleteResearchById, editResearch } from '../../store/Research/api'
+import { addResearch, deleteAllResearches, deleteResearch, updateResearch } from '../../store/Research/api'
 import { useResearches } from '../../hooks/useResearches'
+import { OrderResearchResultInput } from './OrderResearchResultInput'
 
 export interface ExpandedRow {
   [id: string]: ReactNode
@@ -43,20 +42,12 @@ export const Researches = () => {
     inputBlurHandler: descBlurHandler,
     setValue: setDesc,
   } = useInput(correctTextInput, '')
-  const {
-    value: resultValue,
-    isValid: resultIsValid,
-    hasError: resultHasError,
-    valueChangeHandler: resultChangeHandler,
-    inputBlurHandler: resultBlurHandler,
-    setValue: setResult,
-  } = useInput(correctTextInput, '')
 
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<ExpandedRow>({})
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [editedResourceId, setEditedResourceId] = useState<string>('')
 
-  const { researches, researchesLoading } = useResearches({ fetchOnMount: true })
+  const { researches, isLoading: researchesLoading } = useResearches({ fetchOnMount: true })
 
   const dispatch = useAppDispatch()
 
@@ -72,16 +63,12 @@ export const Researches = () => {
               return {
                 title: o.orderName,
                 description: (
-                  <EuiFormRow hasEmptyLabelSpace isInvalid={resultHasError}>
-                    <EuiFlexGroup>
-                      <EuiFlexItem>
-                        <EuiFieldText defaultValue={o.result} name={o.id} onChange={resultChangeHandler} onBlur={resultBlurHandler}/>
-                      </EuiFlexItem>
-                      <EuiFlexItem>
-                        <EuiButton onClick={(e: any) => console.log(e)}>Set result</EuiButton>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiFormRow>
+                  <OrderResearchResultInput
+                    initialValue={o.result}
+                    name={o.orderName}
+                    researchId={item.id}
+                    orderResearchId={o.id}
+                  />
                 ),
               }
             })
@@ -98,6 +85,9 @@ export const Researches = () => {
       },
       description: {
         type: 'string',
+      },
+      orderResearches: {
+        type: 'array',
       },
     },
   }
@@ -126,7 +116,7 @@ export const Researches = () => {
           icon: 'trash',
           type: 'icon',
           onClick: ({ id }) => {
-            dispatch(deleteResearchById(id))
+            dispatch(deleteResearch(id))
           },
         },
         {
@@ -164,13 +154,13 @@ export const Researches = () => {
 
   const onAddHandler = () => {
     if (nameIsValid && descIsValid) {
-      dispatch(createResearch({ name: nameValue, description: descValue }))
+      dispatch(addResearch({ name: nameValue, description: descValue }))
     }
   }
 
   const onEditHandler = () => {
     if (nameIsValid && descIsValid) {
-      dispatch(editResearch({ name: nameValue, description: descValue, id: editedResourceId }))
+      dispatch(updateResearch({ name: nameValue, description: descValue, id: editedResourceId }))
       setIsEditing(false)
     }
   }
@@ -182,7 +172,7 @@ export const Researches = () => {
       <TableView<Research>
         columns={columns}
         compare={(a, b) => a.name.localeCompare(b.name)}
-        deleteAll={deleteAllResearchesByIds}
+        deleteAll={deleteAllResearches}
         nameOfRecord={'Research'}
         records={researches}
         schema={schema}

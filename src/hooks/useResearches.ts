@@ -7,13 +7,11 @@ type Props = {
 }
 
 export const useResearches = (props: Props) => {
-  const fetchResearches = async () => {
-    await dispatch(getResearches())
-  }
-
   fetchOnMount({
     fetchOnMount: props.fetchOnMount,
-    fetch: fetchResearches,
+    fetch: async () => {
+      await dispatch(getResearches())
+    },
   })
 
   const dispatch = useAppDispatch()
@@ -24,6 +22,6 @@ export const useResearches = (props: Props) => {
 
   return {
     researches,
-    researchesLoading: isLoading,
+    isLoading,
   }
 }

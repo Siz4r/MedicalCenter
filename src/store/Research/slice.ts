@@ -1,6 +1,13 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 import { Research } from './types'
-import { createResearch, deleteAllResearchesByIds, deleteResearchById, editResearch, getResearches } from './api'
+import {
+  addResearch,
+  deleteAllResearches,
+  deleteResearch,
+  updateOrderResearchResult,
+  updateResearch,
+  getResearches,
+} from './api'
 
 interface researchSliceState {
   researches: Research[]
@@ -13,24 +20,24 @@ const initialState: researchSliceState = {
 }
 
 export const researchSlice = createSlice({
-  name: 'reseaches',
+  name: 'researches',
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(createResearch.fulfilled, (state, action) => {
+    builder.addCase(addResearch.fulfilled, (state, action) => {
       state.researches = [...state.researches, { ...action.meta.arg, id: action.payload, orderResearches: [] }]
     })
     builder.addCase(getResearches.fulfilled, (state, action) => {
       state.researches = action.payload
     })
-    builder.addCase(deleteResearchById.fulfilled, (state, action) => {
+    builder.addCase(deleteResearch.fulfilled, (state, action) => {
       state.researches = state.researches.filter(r => r.id !== action.meta.arg)
     })
-    builder.addCase(deleteAllResearchesByIds.fulfilled, (state, action) => {
+    builder.addCase(deleteAllResearches.fulfilled, (state, action) => {
       state.researches = state.researches.filter(r => !action.meta.arg.includes(r.id))
     })
 
-    builder.addCase(editResearch.fulfilled, (state, action) => {
+    builder.addCase(updateResearch.fulfilled, (state, action) => {
       const args = action.meta.arg
       state.researches = state.researches.map(r => {
         if (r.id == args.id) {
@@ -44,13 +51,29 @@ export const researchSlice = createSlice({
       })
     })
 
+    builder.addCase(updateOrderResearchResult.fulfilled, (state, action) => {
+      const args = action.meta.arg
+
+      state.researches = state.researches.map(r => {
+        if (r.id === args.researchId) {
+          r.orderResearches = r.orderResearches.map(o => {
+            if (o.id === args.id) {
+              o.result = args.result
+            }
+            return o
+          })
+        }
+        return r
+      })
+    })
+
     builder.addMatcher(
       isAnyOf(
-        createResearch.pending,
+        addResearch.pending,
         getResearches.pending,
-        deleteResearchById.pending,
-        deleteAllResearchesByIds.pending,
-        editResearch.pending
+        deleteResearch.pending,
+        deleteAllResearches.pending,
+        updateResearch.pending
       ),
       state => {
         state.isLoading = true
@@ -59,16 +82,16 @@ export const researchSlice = createSlice({
 
     builder.addMatcher(
       isAnyOf(
-        createResearch.fulfilled,
-        createResearch.rejected,
+        addResearch.fulfilled,
+        addResearch.rejected,
         getResearches.fulfilled,
         getResearches.rejected,
-        deleteResearchById.fulfilled,
-        deleteResearchById.rejected,
-        deleteAllResearchesByIds.fulfilled,
-        deleteAllResearchesByIds.rejected,
-        editResearch.fulfilled,
-        editResearch.rejected
+        deleteResearch.fulfilled,
+        deleteResearch.rejected,
+        deleteAllResearches.fulfilled,
+        deleteAllResearches.rejected,
+        updateResearch.fulfilled,
+        updateResearch.rejected
       ),
       state => {
         state.isLoading = false

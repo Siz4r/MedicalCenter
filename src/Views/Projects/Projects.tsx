@@ -1,5 +1,5 @@
-import { EuiBasicTableColumn, EuiForm, EuiFlexGroup, EuiFormRow, EuiFlexItem, EuiButton, EuiSpacer } from '@elastic/eui'
-import React, { useEffect, useState } from 'react'
+import { EuiBasicTableColumn, EuiButton, EuiFlexGroup, EuiFlexItem, EuiForm } from '@elastic/eui'
+import React, { useState } from 'react'
 import { Project } from '../../store/Project/types'
 import { TableView } from '../TableView'
 import FieldInput from '../Patients/PatientFieldInput'
@@ -7,9 +7,9 @@ import { correctTextInput } from '../Patients/PatientForm'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../store'
-import { deleteProject, deleteAllProjects, getProjects, addProject, updateProject } from '../../store/Project/api'
+import { addProject, deleteAllProjects, deleteProject, updateProject } from '../../store/Project/api'
 import { Patient } from '../../store/Patient/types'
-import { useAppSelector } from '../../hooks/reduxHooks'
+import { useProjects } from '../../hooks/useProjects'
 
 export const Projects = () => {
   const [projectToEdit, setProjectToEdit] = useState<Project>()
@@ -18,15 +18,7 @@ export const Projects = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>()
 
-  const projects = useAppSelector(({ projects }) => {
-    {
-      return projects.projects
-    }
-  }) as Project[]
-
-  useEffect(() => {
-    dispatch(getProjects())
-  }, [])
+  const { projects } = useProjects({ fetchOnMount: true })
 
   const onAddHandler = () => {
     setIsEditing(false)

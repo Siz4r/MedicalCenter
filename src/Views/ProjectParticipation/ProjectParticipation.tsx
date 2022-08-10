@@ -1,45 +1,31 @@
 import {
   EuiFlexGroup,
+  EuiFlexItem,
   EuiListGroup,
   EuiListGroupItem,
-  EuiFlexItem,
+  EuiLoadingSpinner,
   EuiSpacer,
   EuiTitle,
-  EuiLoadingSpinner,
 } from '@elastic/eui'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../../store'
 import { Patient } from '../../store/Patient/types'
 import { ProjectParticipant } from '../../store/Project/types'
 import { TableView } from '../TableView'
-import {
-  deleteProject,
-  addPatientToProject,
-  deletePatientFromProject,
-  updatePatientConsent,
-} from '../../store/Project/api'
+import { addPatientToProject, deletePatientFromProject, updatePatientConsent } from '../../store/Project/api'
 import { deleteAllPatients, getPatients } from '../../store/Patient/api'
-import { useEffect } from 'react'
-import { useAppSelector } from '../../hooks/reduxHooks'
 import { useProjects } from '../../hooks/useProjects'
+import { usePatients } from '../../hooks/usePatients'
 
 export const ProjectParticipation = () => {
-  const { projects, projectsLoading } = useProjects({ fetchOnMount: true })
+  const { projects, isLoading: projectsLoading } = useProjects({ fetchOnMount: true })
 
-  const patients = useAppSelector(({ patients }) => {
-    {
-      return patients.patients
-    }
-  })
+  const { patients } = usePatients({ fetchOnMount: true })
 
   const [listIndex, setListIndex] = useState<number>(0)
 
   const dispatch = useDispatch<AppDispatch>()
-
-  useEffect(() => {
-    dispatch(getPatients())
-  }, [])
 
   const schema = {
     strict: true,

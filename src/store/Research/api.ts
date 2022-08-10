@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import { api } from '../../core/apifetch'
 import { Research } from './types'
 
-export const createResearch = createAsyncThunk<string, { name: string; description: string }, {}>(
+export const addResearch = createAsyncThunk<string, { name: string; description: string }, {}>(
   'researches/add',
   async (data, { rejectWithValue }) => {
     try {
@@ -28,8 +28,8 @@ export const getResearches = createAsyncThunk<Research[], void, {}>(
   }
 )
 
-export const deleteResearchById = createAsyncThunk<void, string, {}>(
-  'researches/deleteById',
+export const deleteResearch = createAsyncThunk<void, string, {}>(
+  'researches/delete',
   async (id, { rejectWithValue }) => {
     try {
       await api.delete(`/api/researches/${id}`)
@@ -39,8 +39,8 @@ export const deleteResearchById = createAsyncThunk<void, string, {}>(
   }
 )
 
-export const deleteAllResearchesByIds = createAsyncThunk<void, string[], {}>(
-  'researches/deleteAllByIds',
+export const deleteAllResearches = createAsyncThunk<void, string[], {}>(
+  'researches/deleteAll',
   async (ids, { rejectWithValue }) => {
     try {
       await api.delete('/api/researches', {
@@ -52,11 +52,22 @@ export const deleteAllResearchesByIds = createAsyncThunk<void, string[], {}>(
   }
 )
 
-export const editResearch = createAsyncThunk<void, { name: string; description: string; id: string }>(
-  'researches/edit',
+export const updateResearch = createAsyncThunk<void, { name: string; description: string; id: string }>(
+  'researches/update',
   async (data, { rejectWithValue }) => {
     try {
       await api.put(`/api/researches/${data.id}`, data)
+    } catch (error: any) {
+      return rejectWithValue(error)
+    }
+  }
+)
+
+export const updateOrderResearchResult = createAsyncThunk<void, { id: string; result: string; researchId: string }, {}>(
+  'researches/updateResult',
+  async (data, { rejectWithValue }) => {
+    try {
+      await api.put(`/api/orderResearches/${data.id}`, { result: data.result })
     } catch (error: any) {
       return rejectWithValue(error)
     }

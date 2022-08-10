@@ -1,4 +1,13 @@
-import { EuiBasicTableColumn, EuiText, EuiForm, EuiFlexGroup, EuiFlexGrid, EuiFlexItem, EuiButton } from '@elastic/eui'
+import {
+  EuiBasicTableColumn,
+  EuiText,
+  EuiForm,
+  EuiFlexGroup,
+  EuiFlexGrid,
+  EuiFlexItem,
+  EuiButton,
+  EuiLoadingSpinner,
+} from '@elastic/eui'
 import { Action } from '@elastic/eui/src/components/basic_table/action_types'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -7,7 +16,7 @@ import { AppDispatch } from '../../store'
 import { addPatient, deleteAllPatients, deletePatient, getPatients, updatePatient } from '../../store/Patient/api'
 import { TableView } from '../TableView'
 import FieldInput from './PatientFieldInput'
-import { useAppSelector } from '../../hooks/reduxHooks'
+import { usePatients } from '../../hooks/usePatients'
 
 const isNotEmpty = (value: string) => value.trim().length > 2
 const hasOnlyNumbers = (value: string) => /^\d+$/.test(value)
@@ -38,9 +47,7 @@ export const Patients = () => {
   const [city, setCity] = useState('')
   const dispatch = useDispatch<AppDispatch>()
 
-  const patients = useAppSelector(({ patients }) => {
-    return patients.patients
-  })
+  const { patients, isLoading } = usePatients({ fetchOnMount: true })
 
   function validateInputs() {
     return (
@@ -168,7 +175,9 @@ export const Patients = () => {
     },
   }
 
-  return (
+  return isLoading ? (
+    <EuiLoadingSpinner size={'l'} />
+  ) : (
     <div>
       <TableView<Patient>
         records={patients}

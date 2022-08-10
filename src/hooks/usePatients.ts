@@ -1,39 +1,27 @@
-import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from './reduxHooks'
 import { getPatients } from '../store/Patient/api'
+import { fetchOnMount } from './fetchOnMount'
 
-type UseProjectsConfig = {
+type Props = {
   fetchOnMount?: boolean
 }
 
-export const usePatients = (config: UseProjectsConfig | undefined = undefined) => {
-  const fetchOnMount = !(config && config.fetchOnMount === false)
-  const [patientsLoading, setPatientsLoading] = useState(fetchOnMount)
-
+export const usePatients = (props: Props) => {
   const dispatch = useAppDispatch()
 
-  const patients = useAppSelector(({ patients }) => {
-    return patients.patients
+  const { patients, isLoading } = useAppSelector(({ patients }) => {
+    return patients
   })
 
-  const fetchPatients = async () => {
-    setPatientsLoading(true)
-    await dispatch(getPatients())
-    setPatientsLoading(false)
-  }
-
-  useEffect(() => {
-    if (fetchOnMount) {
-      try {
-        fetchPatients()
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }, [])
+  fetchOnMount({
+    fetchOnMount: props.fetchOnMount,
+    fetch: async () => {
+      await dispatch(getPatients())
+    },
+  })
 
   return {
-    patientsLoading,
+    isLoading,
     patients,
   }
 }
