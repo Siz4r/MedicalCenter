@@ -84,7 +84,6 @@ export const projectSlice = createSlice({
     })
 
     builder.addCase(updatePatientConsent.fulfilled, (state, action) => {
-      console.log('dupa')
       state.projects = state.projects.map((p: Project) => {
         if (p.id == action.meta.arg.projectId) {
           p.participants = p.participants.map(projectParticipant => {

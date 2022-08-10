@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { patientSlice } from './Patient/slice'
 import { projectSlice } from './Project/slice'
+import { researchSlice } from './Research/slice'
 
 const appReducer = combineReducers({
   patients: patientSlice.reducer,
   projects: projectSlice.reducer,
+  researches: researchSlice.reducer,
 })
 
 export const store = configureStore({

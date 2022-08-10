@@ -18,6 +18,7 @@ import { AsyncThunk } from '@reduxjs/toolkit'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from '../store'
+import { ExpandedRow } from './Researches/Researches'
 
 type Props<T> = {
   records: any[]
@@ -25,8 +26,10 @@ type Props<T> = {
   columns: EuiBasicTableColumn<any>[]
   schema: any
   deleteAll: AsyncThunk<void, string[], {}>
-  delete: AsyncThunk<void, string, {}>
   nameOfRecord: string
+  itemIdToExpandedRowMap?: ExpandedRow
+  isExpandable?: boolean
+  layout?: 'fixed' | 'auto'
 }
 
 export const TableView = <T extends { id: string }>(props: Props<T>) => {
@@ -161,6 +164,8 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
         tableCaption="Demo of EuiBasicTable"
         items={pageOfItems}
         itemId="id"
+        itemIdToExpandedRowMap={props.itemIdToExpandedRowMap}
+        isExpandable={props.isExpandable}
         columns={props.columns}
         pagination={pagination}
         sorting={sorting}
@@ -183,6 +188,7 @@ export const TableView = <T extends { id: string }>(props: Props<T>) => {
         onChange={onTableChange}
         isSelectable={true}
         selection={selection}
+        tableLayout={props.layout}
       />
       <EuiSpacer size="s" />
     </div>
